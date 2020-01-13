@@ -5,6 +5,7 @@ import sklearn
 import operator
 import requests
 from sklearn.metrics import classification_report
+from sklearn.metrics import precision_score,recall_score,f1_score,accuracy_score
 from sklearn.feature_selection import chi2
 from sklearn.feature_selection import SelectKBest
 
@@ -68,9 +69,15 @@ def train_svm_classifier(positive_dataset_train, negative_dataset_train, vocabul
   # Train the svm binary classifier
   X_train_sentanalysis=np.asarray(X_train)
   Y_train_sentanalysis=np.asarray(Y_train)
+
+  # CHI-SQUARED TEST METHOD
+  # To remove features that appears to be irrelevant
+  fs_sentanalysis=SelectKBest(chi2, k=500).fit(X_train_sentanalysis, Y_train_sentanalysis)
+  X_train_sentanalysis_new = fs_sentanalysis.transform(X_train_sentanalysis)
+
   svm_clf_sentanalysis=sklearn.svm.SVC(gamma='auto')
-  svm_clf_sentanalysis.fit(X_train_sentanalysis,Y_train_sentanalysis)
-  return svm_clf_sentanalysis
+  svm_clf_sentanalysis.fit(X_train_sentanalysis_new, Y_train_sentanalysis)
+  return svm_clf_sentanalysis, fs_sentanalysis
 
 def main():
     # all the code goes here other than helping functions
@@ -101,7 +108,9 @@ def main():
     # svm_clf_sentanalysis=sklearn.svm.SVC(gamma='auto')
     # svm_clf_sentanalysis.fit(X_train_sentanalysis,Y_train_sentanalysis)
 
-    svm_clf_sentanalysis = train_svm_classifier(positive_dataset_train, negative_dataset_train, vocabulary)
+    svm_clf_sentanalysis, fs_sentanalysis = train_svm_classifier(positive_dataset_train, negative_dataset_train, vocabulary)
+
+
 
     # Validation of test set data
     path='datasets_coursework1/IMDb/test/imdb_test_pos.txt'
@@ -123,10 +132,19 @@ def main():
     X_test=np.asarray(X_test)
     Y_test_gold=np.asarray(Y_test)
 
-    print(Y_test_gold)
 
-    Y_text_predictions=svm_clf_sentanalysis.predict(X_test)
+    Y_text_predictions=svm_clf_sentanalysis.predict(fs_sentanalysis.transform(X_test))
     print(classification_report(Y_test_gold, Y_text_predictions))
+    accuracy = accuracy_score(Y_test_gold, Y_text_predictions)
+    precision = precision_score(Y_test_gold, Y_text_predictions, average='macro')
+    f1 = f1_score(Y_test_gold, Y_text_predictions, average='macro')
+    recall = recall_score(Y_test_gold, Y_text_predictions, average='macro')
+
+    print ("\n Accuracy : " +str(accuracy))
+    print ("\n Precision : " +str(precision))
+    print ("\n Recall : " +str(recall))
+    print ("\n F1 " +str(f1))
+
 
     # sentence_1="It was fascinating, probably one of the best movies I've ever seen."
     # sentence_2="Bad movie, probably one of the worst I have ever seen."
