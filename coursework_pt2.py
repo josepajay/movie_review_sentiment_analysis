@@ -5,6 +5,7 @@ import sklearn
 import operator
 import requests
 from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix
 from sklearn.metrics import precision_score,recall_score,f1_score,accuracy_score
 from sklearn.feature_selection import chi2
 from sklearn.feature_selection import SelectKBest
@@ -81,7 +82,7 @@ def train_svm_classifier(positive_dataset_train, negative_dataset_train, vocabul
 
 def main():
     # all the code goes here other than helping functions
-    print("Program start, raining model..")
+    print("Program start, training model..")
     path='datasets_coursework1/IMDb/train/imdb_train_pos.txt'
     positive_dataset_train=open(path).readlines()
     path='datasets_coursework1/IMDb/train/imdb_train_neg.txt'
