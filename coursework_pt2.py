@@ -81,7 +81,7 @@ def train_svm_classifier(positive_dataset_train, negative_dataset_train, vocabul
 
 def main():
     # all the code goes here other than helping functions
-    print("Start program ? success.....")
+    print("Program start, raining model..")
     path='datasets_coursework1/IMDb/train/imdb_train_pos.txt'
     positive_dataset_train=open(path).readlines()
     path='datasets_coursework1/IMDb/train/imdb_train_neg.txt'
@@ -89,29 +89,12 @@ def main():
 
     # invoke get_vocabulary function defined above to obtain vocabulary array
     vocabulary = get_vocabulary(positive_dataset_train, negative_dataset_train, 1000)
-    # X_train=[]
-    # Y_train=[]
-    # for pos_review in positive_dataset_train:
-    #   vector_pos_review=get_vector_text(vocabulary,pos_review)
-    #   X_train.append(vector_pos_review)
-    #   Y_train.append(1)
-    # for neg_review in negative_dataset_train:
-    #   vector_neg_review=get_vector_text(vocabulary,neg_review)
-    #   X_train.append(vector_neg_review)
-    #   Y_train.append(0)
-    #
-    # print('ethrem kazhinju .. pakshe eniyum und mone..!')
-    # # Train the svm binary classifier
-    # X_train_sentanalysis=np.asarray(X_train)
-    # Y_train_sentanalysis=np.asarray(Y_train)
-    #
-    # svm_clf_sentanalysis=sklearn.svm.SVC(gamma='auto')
-    # svm_clf_sentanalysis.fit(X_train_sentanalysis,Y_train_sentanalysis)
+    print("\n Model training in progress..")
 
     svm_clf_sentanalysis, fs_sentanalysis = train_svm_classifier(positive_dataset_train, negative_dataset_train, vocabulary)
 
-
-
+    print("\n Model training complete")
+    print("\n Predicting for test dataset")
     # Validation of test set data
     path='datasets_coursework1/IMDb/test/imdb_test_pos.txt'
     positive_dataset_test=open(path).readlines()
@@ -143,15 +126,8 @@ def main():
     print ("\n Accuracy : " +str(accuracy))
     print ("\n Precision : " +str(precision))
     print ("\n Recall : " +str(recall))
-    print ("\n F1 " +str(f1))
-
-
-    # sentence_1="It was fascinating, probably one of the best movies I've ever seen."
-    # sentence_2="Bad movie, probably one of the worst I have ever seen."
-    #
-    #
-    # print (svm_clf_sentanalysis.predict([get_vector_text(vocabulary,sentence_1)]))
-    # print (svm_clf_sentanalysis.predict([get_vector_text(vocabulary,sentence_2)]))
+    print ("\n F1 " +str(f1) + "\n")
+    print (confusion_matrix(Y_test_gold, Y_text_predictions))
 
 if __name__== "__main__":
   main()
